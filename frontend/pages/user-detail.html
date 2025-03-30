@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - iNotebook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/users.css">
+    <link rel="stylesheet" href="../css/public-notes.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <a href="dashboard.html" class="logo">iNotebook</a>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links" id="user-nav">
+                    <li><a href="dashboard.html">My Notes</a></li>
+                    <li><a href="public-notes.html">Public Notes</a></li>
+                    <li><a href="users.html" class="active">Users</a></li>
+                    <li><a href="user-info.html">Profile</a></li>
+                    <li><a href="#" id="logout-btn">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div id="alert-container"></div>
+            
+            <!-- Back navigation -->
+            <div class="page-navigation">
+                <a href="users.html" class="nav-back">
+                    <i class="fas fa-arrow-left"></i> Back to Users
+                </a>
+            </div>
+            
+            <!-- User profile container -->
+            <div id="user-detail-container">
+                <div class="loading-spinner">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                </div>
+            </div>
+            
+            <!-- User public notes -->
+            <div class="user-public-notes">
+                <h2>Public Notes</h2>
+                <div id="user-notes-container">
+                    <div class="loading-spinner">
+                        <i class="fas fa-circle-notch fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 iNotebook. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <!-- CSS for user detail page -->
+    <style>
+        .page-navigation {
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            color: #6c757d;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .nav-back:hover {
+            color: #007bff;
+        }
+        
+        .nav-back i {
+            margin-right: 0.5rem;
+        }
+        
+        /* User profile card */
+        .user-profile-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .user-avatar-large {
+            font-size: 5rem;
+            color: #007bff;
+            margin-bottom: 1rem;
+        }
+        
+        .user-profile-info {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .user-profile-name {
+            font-size: 1.8rem;
+            margin: 0 0 0.5rem 0;
+            color: #343a40;
+        }
+        
+        .user-profile-username {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin: 0 0 1rem 0;
+        }
+        
+        .user-profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        .user-stat-card {
+            text-align: center;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .user-stat-card i {
+            font-size: 1.5rem;
+            color: #007bff;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-stat-card h3 {
+            font-size: 1.5rem;
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .user-stat-card p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        /* User's public notes section */
+        .user-public-notes {
+            margin-top: 3rem;
+        }
+        
+        .user-public-notes h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #343a40;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0.75rem;
+        }
+        
+        /* Empty states */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            color: #dee2e6;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state h3 {
+            margin: 0 0 0.5rem 0;
+            color: #343a40;
+        }
+        
+        .empty-state p {
+            margin: 0;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            .user-profile-card {
+                padding: 1.5rem;
+            }
+            
+            .user-profile-name {
+                font-size: 1.5rem;
+            }
+            
+            .user-profile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .user-profile-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    
+    <script src="../js/auth.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check authentication
+            checkAuth();
+            
+            // API URL
+            const API_URL = "http://localhost:8000/api"; // Adjust to match your backend URL
+            
+            // Get user ID from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get("id");
+            
+            if (!userId) {
+                showAlert("error", "User ID is missing");
+                setTimeout(() => {
+                    window.location.href = "users.html";
+                }, 2000);
+                return;
+            }
+            
+            // Load user profile and public notes
+            loadUserProfile(userId);
+            loadUserPublicNotes(userId);
+            
+            /**
+             * Load user profile
+             */
+             async function loadUserProfile(userId) {
+                try {
+                    showLoading();
+                    console.log("Loading user profile from:", `${API_URL}/users/${userId}/`);
+                    
+                    // Try the standard endpoint first
+                    let response = await fetchWithAuth(`${API_URL}/users/${userId}/`);
+                    
+                    // If that fails, try alternative endpoint formats
+                    if (!response.ok && response.status === 404) {
+                        console.log("Trying alternative endpoint");
+                        response = await fetchWithAuth(`${API_URL}/users/profile/${userId}/`);
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error("Failed to load user profile");
+                    }
+                    
+                    const userData = await response.json();
+                    console.log("User data received:", userData);
+                    displayUserProfile(userData);
+                    
+                    // Update page title
+                    document.title = `${userData.username} - User Profile - iNotebook`;
+                } catch (error) {
+                    console.error("Error loading profile:", error);
+                    showAlert("error", error.message);
+                } finally {
+                    hideLoading();
+                }
+            }
+            
+            /**
+             * Display user profile
+             */
+             function displayUserProfile(user) {
+                const container = document.getElementById("user-detail-container");
+                console.log("User object fields:", Object.keys(user));
+                console.log("Public notes count value:", user.public_notes_count);
+                console.log("Looking for similar fields:", 
+                Object.keys(user).filter(key => key.includes('note') || key.includes('public')));
+                if (!container) return;
+                
+                // Calculate days registered if missing
+                let daysRegistered = user.days_registered;
+                if (!daysRegistered && user.date_joined) {
+                    const joinDate = new Date(user.date_joined);
+                    const today = new Date();
+                    const timeDiff = today - joinDate;
+                    daysRegistered = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                }
+                
+                const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ') || 'No name provided';
+                
+                container.innerHTML = `
+                    <div class="user-profile-card">
+                        <div class="user-avatar-large">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="user-profile-info">
+                            <h1 class="user-profile-name">${fullName}</h1>
+                            <p class="user-profile-username">@${user.username}</p>
+                        </div>
+                        <div class="user-profile-stats">
+                            <div class="user-stat-card">
+                                <i class="fas fa-sticky-note"></i>
+                                <h3>${user.notes_count || user.total_notes || 0}</h3>
+                                <p>Total Notes</p>
+                            </div>
+                            <div class="user-stat-card">
+                                <i class="fas fa-globe"></i>
+                                <h3>${user.public_notes_count || 0}</h3>
+                                <p>Public Notes</p>
+                            </div>
+                            <div class="user-stat-card">
+                                <i class="fas fa-calendar-alt"></i>
+                                <h3>${daysRegistered || user.date_joined ? new Date(user.date_joined).toLocaleDateString() : 'N/A'}</h3>
+                                <p>Registered Date </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            /**
+             * Load user's public notes
+             */
+            async function loadUserPublicNotes(userId) {
+                try {
+                    console.log("Loading user notes from:", `${API_URL}/users/${userId}/notes/`);
+                    
+                    // Try different endpoint formats that might match your Django API
+                    let response;
+                    let endpoints = [
+                        `${API_URL}/users/${userId}/notes/`,
+                        `${API_URL}/notes/?user=${userId}&visibility=public`,
+                        `${API_URL}/notes/user/${userId}/public/`
+                    ];
+                    
+                    // Try each endpoint until one works
+                    for (const endpoint of endpoints) {
+                        console.log("Trying endpoint:", endpoint);
+                        response = await fetchWithAuth(endpoint);
+                        if (response.ok) break;
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error("Failed to load user's notes");
+                    }
+                    
+                    const notes = await response.json();
+                    console.log("Notes data received:", notes);
+                    displayUserPublicNotes(notes.results || notes);
+                } catch (error) {
+                    console.error("Error loading user's notes:", error);
+                    document.getElementById("user-notes-container").innerHTML = `
+                        <div class="alert alert-error">
+                            ${error.message}<br>
+                            <small>Your API endpoints might need configuration.</small>
+                        </div>
+                    `;
+                }
+            }
+            
+            /**
+             * Display user's public notes
+             */
+             function displayUserPublicNotes(notes) {
+                const container = document.getElementById("user-notes-container");
+                if (!container) return;
+                
+                if (!notes || !Array.isArray(notes)) {
+                    console.error("Invalid notes data:", notes);
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle empty-icon"></i>
+                            <h3>Invalid notes data</h3>
+                            <p>The API returned an unexpected format</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Filter for public notes only if needed
+                const publicNotes = notes.filter(note => 
+                    note.visibility === "public" || 
+                    note.is_public === true || 
+                    note.public === true
+                );
+                
+                if (publicNotes.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-sticky-note empty-icon"></i>
+                            <h3>No public notes</h3>
+                            <p>This user hasn't shared any public notes yet</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <div class="notes-grid">
+                        ${publicNotes.map(note => `
+                            <div class="note-card">
+                                <div class="note-header">
+                                    <h3 class="note-title">${note.title || 'Untitled Note'}</h3>
+                                </div>
+                                <div class="note-content">
+                                    <p>${
+                                        note.content ? 
+                                        (note.content.length > 150 ? note.content.substring(0, 150) + '...' : note.content) :
+                                        'No content'
+                                    }</p>
+                                </div>
+                                <div class="note-footer">
+                                    <div class="note-date">
+                                        <i class="fas fa-calendar-alt"></i> 
+                                        ${note.created_at ? new Date(note.created_at).toLocaleDateString() : 'Unknown date'}
+                                    </div>
+                                </div>
+                                <div class="note-actions">
+                                    <a href="view-note.html?id=${note.id}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            /**
+             * Show loading spinner
+             */
+            function showLoading() {
+                const existingSpinner = document.querySelector('.loading-overlay');
+                if (existingSpinner) return;
+                
+                const spinner = document.createElement('div');
+                spinner.className = 'loading-overlay';
+                spinner.innerHTML = '<div class="loading-spinner"><i class="fas fa-circle-notch fa-spin"></i></div>';
+                document.body.appendChild(spinner);
+            }
+            
+            /**
+             * Hide loading spinner
+             */
+            function hideLoading() {
+                const spinner = document.querySelector('.loading-overlay');
+                if (spinner) {
+                    spinner.remove();
+                }
+            }
+            
+            /**
+             * Show alert message
+             */
+            function showAlert(type, message) {
+                const alertContainer = document.getElementById('alert-container');
+                if (!alertContainer) return;
+                
+                alertContainer.innerHTML = `
+                    <div class="alert alert-${type}">
+                        ${message}
+                    </div>
+                `;
+                
+                // Auto-dismiss alert
+                setTimeout(() => {
+                    alertContainer.innerHTML = '';
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

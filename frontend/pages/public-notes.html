@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Notes - iNotebook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/notes.css">
+    <link rel="stylesheet" href="../css/public-notes.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <a href="dashboard.html" class="logo">iNotebook</a>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links" id="user-nav">
+                    <li><a href="dashboard.html">My Notes</a></li>
+                    <li><a href="public-notes.html" class="active">Public Notes</a></li>
+                    <li><a href="users.html">Users</a></li>
+                    <li><a href="user-info.html">Profile</a></li>
+                    <li><a href="#" id="logout-btn">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <h1 class="page-title">Public Notes</h1>
+            
+            <div id="alert-container"></div>
+            
+            <div class="filters-container">
+                <div class="search-container">
+                    <input type="text" id="search-public-notes" placeholder="Search public notes...">
+                    <button id="search-public-btn" class="btn btn-primary btn-sm">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+                <div class="sort-container">
+                    <label for="sort-public-notes">Sort by:</label>
+                    <select id="sort-public-notes" class="form-select">
+                        <option value="-created_at">Newest first</option>
+                        <option value="created_at">Oldest first</option>
+                        <option value="title">Title (A-Z)</option>
+                        <option value="-title">Title (Z-A)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="public-notes-container" class="notes-grid">
+                <!-- Public notes will be loaded here -->
+                <div class="loading-spinner">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 iNotebook. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="../js/auth.js"></script>
+    <script src="../js/notes.js"></script>
+</body>
+</html>

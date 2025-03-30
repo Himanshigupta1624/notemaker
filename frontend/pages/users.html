@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - iNotebook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/users.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <a href="dashboard.html" class="logo">iNotebook</a>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links" id="user-nav">
+                    <li><a href="dashboard.html">My Notes</a></li>
+                    <li><a href="public-notes.html">Public Notes</a></li>
+                    <li><a href="users.html" class="active">Users</a></li>
+                    <li><a href="user-info.html">Profile</a></li>
+                    <li><a href="#" id="logout-btn">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <h1 class="page-title">Users</h1>
+            
+            <div id="alert-container"></div>
+            
+            <div class="filters-container">
+                <div class="search-container">
+                    <input type="text" id="search-users" placeholder="Search users...">
+                    <button id="search-users-btn" class="btn btn-primary btn-sm">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </div>
+            
+            <div id="users-container">
+                <div class="loading-spinner">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 iNotebook. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="../js/auth.js"></script>
+    <script src="../js/users.js"></script>
+</body>
+</html>
