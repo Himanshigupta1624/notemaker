@@ -77,9 +77,7 @@
                 </div>
             </div>
             
-            <div class="note-detail-tags">
-                <!-- Tags will be inserted here -->
-            </div>
+            
             
             <div class="note-detail-content"></div>
             
@@ -188,20 +186,9 @@
             margin-right: 0.5rem;
         }
         
-        .note-detail-tags {
-            padding: 1rem 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
         
-        .note-tag {
-            background-color: #e9ecef;
-            padding: 0.25rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            color: #495057;
-        }
+        
+        
         
         .note-detail-content {
             padding: 2rem;
@@ -356,18 +343,8 @@
                 // Set content
                 noteDetail.querySelector(".note-detail-content").innerHTML = formatNoteContent(note.content);
                 
-                // Set tags if available
-                const tagsContainer = noteDetail.querySelector(".note-detail-tags");
-                if (note.tags && note.tags.length > 0) {
-                    note.tags.forEach(tag => {
-                        const tagElement = document.createElement("span");
-                        tagElement.className = "note-tag";
-                        tagElement.textContent = tag.name;
-                        tagsContainer.appendChild(tagElement);
-                    });
-                } else {
-                    tagsContainer.style.display = "none";
-                }
+                
+                
                 
                 // Set actions for note owner
                 const actionsContainer = noteDetail.querySelector(".note-detail-actions");

@@ -17,8 +17,3 @@ class Note(models.Model):
     def __str__(self):
         return self.title 
 
-class Tag(models.Model):
-    name=models.CharField(max_length=50,unique=True)
-    notes=models.ManyToManyField(Note,related_name='tags')       
-    def __str__(self):
-        return self.name

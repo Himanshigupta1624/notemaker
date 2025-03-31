@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework import viewsets,permissions,generics,filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import Note, Tag
-from .serializers import NoteSerializer,TagSerializer
+from .models import Note
+from .serializers import NoteSerializer
 from .permissions import IsAuthorOrReadOnly
 
 class NoteViewset(viewsets.ModelViewSet):
@@ -51,15 +51,5 @@ class NoteViewset(viewsets.ModelViewSet):
         serializer=self.get_serializer(filtered_notes,many=True)
         return Response(serializer.data)
     
-class TagViewset(viewsets.ModelViewSet):
-    queryset=Tag.objects.all()
-    serializer_class=TagSerializer
-    permission_classes=[permissions.IsAuthenticated]   
-    @action(detail=True,methods=['get'])
-    def notes(self,request,pk=None):
-        tag=self.get_object()
-        user=request.user
-        notes=tag.notes.filter(visibility='public')|tag.notes.filter(author=user)
-        serializer=NoteSerializer(notes,many=True)
-        return Response(serializer.data)
+
                  

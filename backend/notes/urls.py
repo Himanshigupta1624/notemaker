@@ -1,10 +1,10 @@
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
-from .views import NoteViewset,TagViewset
+from .views import NoteViewset
 
 router=DefaultRouter()
 router.register(r'notes',NoteViewset,basename='note')
-router.register(r'tags',TagViewset,basename='tag')
+
 
 urlpatterns = [
     path('',include(router.urls)),

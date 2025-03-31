@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Note,Tag
+from .models import Note
 class NoteAdmin(admin.ModelAdmin):
     list_display=('title', 'author', 'visibility', 'created_at', 'updated_at')
     list_filter=('visibility', 'created_at','updated_at')
@@ -7,4 +7,4 @@ class NoteAdmin(admin.ModelAdmin):
     readonly_fields=('created_at', 'updated_at')
     
 admin.site.register(Note,NoteAdmin)
-admin.site.register(Tag)    
+ 

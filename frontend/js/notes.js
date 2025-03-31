@@ -86,53 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
     
-    /**
-     * TAG HANDLING - Convert any type of tags data to string array
-     */
-    function normalizeTags(tags) {
-        // Handle null/undefined case
-        if (!tags) return [];
-        
-        // If it's already an array, process each item
-        if (Array.isArray(tags)) {
-            return tags.map(tag => {
-                // If tag is a string, return it directly
-                if (typeof tag === 'string') return tag;
-                
-                // If tag is an object with name property, return the name
-                if (tag && typeof tag === 'object' && tag.name) return tag.name;
-                
-                // If it's some other object, try to convert it to string
-                if (tag && typeof tag === 'object') {
-                    try {
-                        // This is mainly for debugging - in production you might want
-                        // to return a more user-friendly representation
-                        return JSON.stringify(tag).replace(/[{}"]/g, '');
-                    } catch(e) {
-                        return 'unknown';
-                    }
-                }
-                
-                // For any other type, convert to string
-                return String(tag);
-            });
-        }
-        
-        // If it's a string, split by comma
-        if (typeof tags === 'string') {
-            return tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-        }
-        
-        // If it's an object (but not array), try to extract values
-        if (tags && typeof tags === 'object') {
-            return Object.values(tags)
-                .filter(Boolean)
-                .map(val => (typeof val === 'object' && val.name) ? val.name : String(val));
-        }
-        
-        // Default case: return empty array
-        return [];
-    }
+    
     
     /**
      * Handle note form submission for create/edit
@@ -142,7 +96,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const titleInput = document.getElementById("title");
         const contentInput = document.getElementById("content");
         const visibilityCheckbox = document.getElementById("visibility");
-        const tagsInput = document.getElementById("tags");
         const saveBtn = document.getElementById("save-btn");
         const noteForm = document.getElementById("note-form");
     
@@ -171,18 +124,12 @@ document.addEventListener("DOMContentLoaded", function() {
             const titleInput = document.getElementById("title");
             const contentInput = document.getElementById("content");
             const visibilityCheckbox = document.getElementById("visibility");
-            const tagsInput = document.getElementById("tags");
             
-            // Process tags - split by comma, trim whitespace, filter out empty tags
-            const tags = tagsInput && tagsInput.value ? 
-                tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag !== "") : 
-                [];
                 
             const noteData = {
                 title: titleInput.value.trim(),
                 content: contentInput.value.trim(),
                 visibility: visibilityCheckbox.checked ? "public" : "private",
-                tags: tags.map(tag => ({ name: tag }))
             };
             
             console.log("Submitting note data:", noteData);
@@ -270,40 +217,6 @@ document.addEventListener("DOMContentLoaded", function() {
             if (document.getElementById("content")) document.getElementById("content").value = note.content || '';
             if (document.getElementById("visibility")) document.getElementById("visibility").checked = note.visibility === "public";
             
-            // Populate tags field if it exists and note has tags
-            const tagsInput = document.getElementById("tags");
-            if (tagsInput && note.tags) {
-                console.log("Raw tags from server:", JSON.stringify(note.tags));
-                let tagArray = [];
-                if (Array.isArray(note.tags)) {
-                   tagArray = note.tags.map(tag => {
-                        // Handle case where tag is an object with name property
-                        if (tag && typeof tag === 'object' && 'name' in tag) {
-                            return tag.name;
-                        } 
-                        // Handle case where tag is already a string
-                        else if (typeof tag === 'string') {
-                            return tag;
-                        }
-                        // Fall back to string representation
-                        return String(tag);
-        });
-    }       else if (typeof note.tags === 'string') {
-        // Handle case where tags might be a comma-separated string
-             tagArray = note.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-    }       else if (note.tags && typeof note.tags === 'object') {
-        // Handle case where tags might be a single object or dictionary
-            if (Object.keys(note.tags).length > 0) {
-              tagArray = Object.values(note.tags)
-                .filter(Boolean)
-                .map(val => (typeof val === 'object' && val.name) ? val.name : String(val));
-        }
-    }
-    
-                console.log("Extracted tag names:", tagArray);
-                tagsInput.value = tagArray.join(", ");
-                
-            }
         } catch (error) {
             console.error("Error loading note:", error);
             showAlert("error", error.message);
@@ -354,45 +267,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const createdDate = new Date(note.created_at).toLocaleString();
         const updatedDate = new Date(note.updated_at).toLocaleString();
         
-        // Direct extraction of tag names with better error handling
-        let tagArray = [];
-        
-        try {
-            // Log raw tag data for debugging
-            console.log(`Detail view - note ${note.id} tags:`, JSON.stringify(note.tags));
-            
-            if (Array.isArray(note.tags)) {
-                tagArray = note.tags.map(tag => {
-                    // If tag is an object with name property (most likely case)
-                    if (tag && typeof tag === 'object' && 'name' in tag) {
-                        return tag.name;
-                    }
-                    // If tag is already a string
-                    else if (typeof tag === 'string') {
-                        return tag;
-                    }
-                    // If it's some other object, convert to string
-                    else if (tag && typeof tag === 'object') {
-                        return JSON.stringify(tag).replace(/[{}"]/g, '');
-                    }
-                    // For any other type, convert to string
-                    return String(tag || '');
-                });
-            } else if (typeof note.tags === 'string') {
-                // Handle case where tags might be a comma-separated string
-                tagArray = note.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-            }
-            
-            console.log(`Extracted tag names for detail view - note ${note.id}:`, tagArray);
-        } catch (error) {
-            console.error("Error processing tags:", error);
-            tagArray = [];
-        }
-        
-        const tagsHtml = tagArray.length > 0 ? 
-            `<div class="note-tags">
-                ${tagArray.map(tag => `<span class="note-tag">${tag}</span>`).join('')}
-             </div>` : '';
         
         noteViewContainer.innerHTML = `
             <div class="card">
@@ -418,7 +292,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         ${note.content ? note.content.replace(/\n/g, '<br>') : ''}
                     </div>
                     
-                    ${tagsHtml}
                     
                     <div class="note-view-actions">
                         <a href="dashboard.html" class="btn btn-outline-primary">Back to Notes</a>
@@ -539,46 +412,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const contentPreview = note.content ? 
                 (note.content.length > 100 ? note.content.substring(0, 100) + "..." : note.content) : "";
             
-            // Direct extraction of tag names with better error handling
-            let tagArray = [];
-            
-            try {
-                // Log raw tag data for debugging
-                console.log(`Note ${note.id} tags:`, JSON.stringify(note.tags));
-                
-                if (Array.isArray(note.tags)) {
-                    tagArray = note.tags.map(tag => {
-                        // If tag is an object with name property (most likely case)
-                        if (tag && typeof tag === 'object' && 'name' in tag) {
-                            return tag.name;
-                        }
-                        // If tag is already a string
-                        else if (typeof tag === 'string') {
-                            return tag;
-                        }
-                        // If it's some other object, convert to string
-                        else if (tag && typeof tag === 'object') {
-                            return JSON.stringify(tag).replace(/[{}"]/g, '');
-                        }
-                        // For any other type, convert to string
-                        return String(tag || '');
-                    });
-                } else if (typeof note.tags === 'string') {
-                    // Handle case where tags might be a comma-separated string
-                    tagArray = note.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-                }
-                
-                console.log(`Extracted tag names for note ${note.id}:`, tagArray);
-            } catch (error) {
-                console.error("Error processing tags:", error);
-                tagArray = [];
-            }
-            
-            const tagsHtml = tagArray.length > 0 ? 
-                `<div class="note-tags">
-                    ${tagArray.map(tag => `<span class="note-tag">${tag}</span>`).join('')}
-                 </div>` : '';
-            
             const noteCard = document.createElement("div");
             noteCard.className = "note-card";
             noteCard.innerHTML = `
@@ -602,7 +435,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                 </div>
                 <div class="note-content">${contentPreview}</div>
-                ${tagsHtml}
                 <div class="note-footer">
                     <span class="note-date">
                         <i class="far fa-calendar-alt"></i> ${updatedDate}
@@ -703,45 +535,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const contentPreview = note.content ? 
                 (note.content.length > 100 ? note.content.substring(0, 100) + "..." : note.content) : "";
             
-            // Direct extraction of tag names with better error handling
-            let tagArray = [];
-            
-            try {
-                // Log raw tag data for debugging
-                console.log(`Public note ${note.id} tags:`, JSON.stringify(note.tags));
-                
-                if (Array.isArray(note.tags)) {
-                    tagArray = note.tags.map(tag => {
-                        // If tag is an object with name property (most likely case)
-                        if (tag && typeof tag === 'object' && 'name' in tag) {
-                            return tag.name;
-                        }
-                        // If tag is already a string
-                        else if (typeof tag === 'string') {
-                            return tag;
-                        }
-                        // If it's some other object, convert to string
-                        else if (tag && typeof tag === 'object') {
-                            return JSON.stringify(tag).replace(/[{}"]/g, '');
-                        }
-                        // For any other type, convert to string
-                        return String(tag || '');
-                    });
-                } else if (typeof note.tags === 'string') {
-                    // Handle case where tags might be a comma-separated string
-                    tagArray = note.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-                }
-                
-                console.log(`Extracted tag names for public note ${note.id}:`, tagArray);
-            } catch (error) {
-                console.error("Error processing tags:", error);
-                tagArray = [];
-            }
-            
-            const tagsHtml = tagArray.length > 0 ? 
-                `<div class="note-tags">
-                    ${tagArray.map(tag => `<span class="note-tag">${tag}</span>`).join('')}
-                 </div>` : '';
             
             const noteCard = document.createElement("div");
             noteCard.className = "card note-card";
@@ -751,7 +544,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         <h3 class="note-title">${note.title || 'Untitled'}</h3>
                     </div>
                     <p class="note-content">${contentPreview}</p>
-                    ${tagsHtml}
                     <div class="note-footer">
                         <span>By: ${note.author ? note.author.username : 'Unknown'}</span>
                         <span>${date}</span>
